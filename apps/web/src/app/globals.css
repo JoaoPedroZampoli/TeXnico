@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-mono-jb), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-serif-display), "Times New Roman", serif;
+  --font-paper: "Latin Modern Roman", "CMU Serif", "Computer Modern", Georgia, "Times New Roman", serif;
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-500: #10b981;
+  --color-brand-600: #0f9f6e;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+}
+
+html, body { height: 100%; }
+body { @apply bg-zinc-50 text-zinc-900 antialiased; }
+
+/* CodeMirror */
+.cm-editor { height: 100%; font-size: 14px; }
+.cm-editor.cm-focused { outline: none; }
+.cm-scroller { font-family: var(--font-mono-jb), ui-monospace, SFMono-Regular, Menlo, monospace; line-height: 1.6; }
+.cm-gutters { background: #fafafa !important; border-right: 1px solid #f0f0f0 !important; color: #a1a1aa; }
+.cm-activeLineGutter { background: #f4f4f5 !important; color: #3f3f46; }
+.cm-activeLine { background: #fafafa !important; }
+.cm-ySelectionInfo {
+  font-family: var(--font-inter), ui-sans-serif, system-ui, sans-serif !important; font-size: 11px !important;
+  font-weight: 600; padding: 1px 5px !important; line-height: 1.4;
+  border-radius: 4px 4px 4px 0; opacity: 1 !important; top: -1.35em !important;
+}
+.cm-flash-line { animation: flash 1.6s ease-out; }
+@keyframes flash { from { background: rgb(16 185 129 / 0.35); } to { background: transparent; } }
+
+/* PDF viewer */
+.pdf-page { box-shadow: 0 1px 3px rgb(0 0 0 / 0.08), 0 4px 16px rgb(0 0 0 / 0.06); }
+.synctex-box { animation: synctex 2.2s ease-out forwards; }
+@keyframes synctex { 0%, 50% { opacity: 1; } 100% { opacity: 0; } }
+
+/* resizable panels */
+[data-separator] { @apply bg-zinc-200 transition-colors; }
+[data-separator]:hover, [data-separator]:active, [data-separator][data-separator="active"] { @apply bg-brand-500; }
+
+.scrollbar-thin { scrollbar-width: thin; }
+
+/* Landing page */
+.landing-grid {
+  background-image:
+    linear-gradient(to right, rgb(24 24 27 / 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(24 24 27 / 0.06) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 40%, transparent 100%);
+}
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+.marquee { animation: marquee 40s linear infinite; }
+@keyframes caret-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
+.caret-blink { animation: caret-blink 1s steps(1) infinite; }
+@keyframes fade-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.fade-up { animation: fade-up 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+@keyframes pdf-in { from { opacity: 0; background: rgb(16 185 129 / 0.18); } to { opacity: 1; background: transparent; } }
+.pdf-in { animation: pdf-in 1.2s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .marquee, .caret-blink, .fade-up, .pdf-in { animation: none !important; }
+}

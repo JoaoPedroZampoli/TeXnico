@@ -1,0 +1,9 @@
+node_modules
+.next
+.env
+.env.local
+*.tsbuildinfo
+next-env.d.ts
+apps/web/public/pdf.worker.min.mjs
+.compile-cache
+deploy/server.env

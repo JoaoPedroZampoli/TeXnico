@@ -1,0 +1,30 @@
+# Only the realtime/compile server, with automatic HTTPS (Caddy + Let's Encrypt).
+# Use this on a free VM (e.g. Oracle Cloud Always Free) when the website is on Vercel.
+#
+#   cd deploy && cp server.env.example server.env   # fill in the values
+#   docker compose -f docker-compose.server.yml up -d --build
+services:
+  server:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: server.env
+    expose:
+      - "4000"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - server
+    env_file: server.env
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+
+volumes:
+  caddy-data:

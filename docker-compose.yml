@@ -1,0 +1,55 @@
+# Everything on one machine (your PC or a VPS):  docker compose up -d --build
+# Then open http://localhost:3000 — see README.md for HTTPS/domain setup.
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: texcollab
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-texcollab}
+      POSTGRES_DB: texcollab
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U texcollab"]
+      interval: 5s
+      retries: 10
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://texcollab:${POSTGRES_PASSWORD:-texcollab}@db:5432/texcollab
+      REALTIME_SECRET: ${REALTIME_SECRET:?defina REALTIME_SECRET no .env}
+      WEB_ORIGIN: ${PUBLIC_WEB_URL:-http://localhost:3000}
+    ports:
+      - "4000:4000"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_REALTIME_URL: ${PUBLIC_REALTIME_URL:-http://localhost:4000}
+    restart: unless-stopped
+    depends_on:
+      - server
+    environment:
+      DATABASE_URL: postgres://texcollab:${POSTGRES_PASSWORD:-texcollab}@db:5432/texcollab
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?defina BETTER_AUTH_SECRET no .env}
+      BETTER_AUTH_URL: ${PUBLIC_WEB_URL:-http://localhost:3000}
+      REALTIME_SECRET: ${REALTIME_SECRET}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID:-}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET:-}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+    ports:
+      - "3000:3000"
+
+volumes:
+  db-data:
